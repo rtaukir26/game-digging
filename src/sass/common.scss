@@ -1,0 +1,161 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+$fontSize: 14px;
+// body {
+//   overflow-x: hidden;
+// }
+html {
+  font-size: $fontSize;
+  font-family: "Roboto", serif;
+}
+// .main {
+//   overflow-x: hidden;
+// }
+input,
+textarea {
+  outline: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+.bg-white {
+  background: #fff !important;
+}
+.bg-blk {
+  background: #000 !important;
+}
+ul {
+  list-style: none;
+}
+.mandatory {
+  position: relative;
+  &::after {
+    content: "*";
+    position: absolute;
+    color: red;
+    margin-left: 4px;
+  }
+}
+.error {
+  border: 1px solid #f95151 !important;
+}
+.error-text {
+  color: #f95151 !important;
+  font-weight: normal !important;
+  font-size: 13px !important;
+}
+.rotate-img {
+  animation: loaderRotate 3s linear infinite;
+}
+@keyframes loaderRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.back-con {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #193a4b;
+  padding: 6px 10px;
+  border-radius: 30px;
+  color: #fff;
+  font-size: 12px;
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.3333333333);
+  img {
+    width: 17px;
+    filter: invert(1);
+  }
+}
+.hover {
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.3333333333);
+}
+.loader-text {
+  color: #777760;
+  padding: 5px;
+  font-size: 13px;
+}
+@keyframes slide_anim {
+  0% {
+    right: -260px;
+  }
+  100% {
+    right: -17px;
+  }
+}
+.p35 {
+  padding-left: 35px !important;
+}
+.df {
+  display: flex;
+}
+.aic {
+  align-items: center;
+}
+.g10 {
+  gap: 10px;
+}
+.j-sb {
+  justify-content: space-between;
+}
+.j-center {
+  justify-content: center;
+}
+.j-end {
+  justify-self: end;
+}
+.smooth-zoom {
+  -webkit-animation: smooth_zoom 0.5s linear;
+  animation: smooth_zoom 0.5s linear;
+}
+
+@keyframes smooth_zoom {
+  0% {
+    transform: scale(0.1, 0.1);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+.p-top10 {
+  padding-top: 10px;
+}
+.pb10 {
+  padding-bottom: 10px;
+}
+.mb10 {
+  margin-bottom: 10px;
+}
+
+// Mixin
+@mixin for-mobile {
+  @media (max-width: 678px) {
+    @content;
+  }
+}
+.Toastify__toast {
+  @include for-mobile {
+    --toastify-toast-width: auto !important;
+    border-radius: 0 !important;
+    margin-top: 10px !important;
+    right: 10px !important;
+    font-size: 12px !important;
+
+    .Toastify__toast-icon {
+      width: 15px;
+    }
+  }
+}
+.back-icon {
+  width: 22px;
+  filter: drop-shadow(3px 3px 6px #000);
+}

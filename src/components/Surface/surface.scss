@@ -1,0 +1,22 @@
+.surface-wrapper {
+  .grass-wrapper {
+    display: flex;
+    gap: 1px;
+  }
+  .grass-span {
+    display: block;
+    height: 10px;
+    width: 2px;
+    background: green;
+  }
+  .grass {
+    // background: #2bf32b;
+    // height: 20px;
+    display: flex;
+    width: 100%;
+    height: 40px;
+    img {
+      //   width: 40px;
+    }
+  }
+}

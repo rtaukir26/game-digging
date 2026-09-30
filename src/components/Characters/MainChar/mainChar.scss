@@ -1,0 +1,13 @@
+.main-char {
+  position: absolute;
+  z-index: 1;
+  // background: aqua;
+  // top: 0px;
+  // left: 50%;
+  .char-body {
+    background: #000;
+    height: 30px;
+    width: 30px;
+    border-radius: 10px;
+  }
+}

@@ -1,0 +1,77 @@
+.wireworm {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 115px;
+  height: 15px;
+  top: 50px;
+  left: 40px;
+  padding: 10px;
+  -webkit-animation: move_insect 100s linear;
+  animation: move_insect 100s linear;
+  transition: all 0.3s ease-in;
+  .wireworm-body {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+  }
+  .wireworm-cell {
+    position: absolute;
+    background: #55101e;
+    height: 10px;
+    border-radius: 10px;
+    box-shadow: -2px 0px 4px #000;
+    &.even {
+      -webkit-animation: move_even_y 3s linear infinite;
+      //   animation: move_insect 100s linear;
+    }
+    &.old {
+      -webkit-animation: move_old_yy 3s linear infinite 6s;
+      //   animation: move_insect 100s linear;
+    }
+  }
+}
+@keyframes move_insect {
+  0% {
+    transform: translateX(30%);
+  }
+  10% {
+    transform: translateX(50%);
+  }
+  50% {
+    transform: translateX(60%) rotate(35deg);
+  }
+  80% {
+    transform: translateX(70%) translateY(50px);
+  }
+  100% {
+    transform: translateX(100%) translateY(50px);
+  }
+}
+
+@keyframes move_even_y {
+  0% {
+    transform: translateY(-1px);
+  }
+  50% {
+    transform: translateY(1px);
+  }
+  100% {
+    transform: translateY(-1px);
+  }
+}
+@keyframes move_old_y {
+  0% {
+    transform: translateY(1px);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
+  100% {
+    transform: translateY(1px);
+  }
+}

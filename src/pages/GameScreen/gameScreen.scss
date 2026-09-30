@@ -1,0 +1,58 @@
+.game-screen {
+  //   background: #ffa5008a;
+  height: 100vh;
+  overflow: hidden;
+
+  .score-container {
+    min-height: 40px;
+  }
+  .play-container {
+    position: relative;
+    height: calc(100vh - 70px);
+    overflow: auto;
+    background: #ffa5008a;
+  }
+  .row {
+    display: flex;
+    overflow: hidden;
+    height: 30px;
+    width: 100%;
+    color: #fff;
+    // background: #333;
+    // border-bottom: 1px solid #e63946;
+    .stone {
+      position: relative;
+      color: #000;
+      font-size: 9px;
+      display: block;
+      height: 100%;
+      width: 14px;
+      &.stone_touched {
+        transition: all 0.3s ease-in;
+        // background: #5d3f0a;
+        // hue changes per column, lightness gets darker per row
+        // background: hsl(
+        //   calc(var(--col) * 15),
+        //   50%,
+        //   calc(45% - var(--row) * 3%)
+        // );
+      }
+      &.hard-stone {
+        background: linear-gradient(
+          90deg,
+          hsl(6deg 12.09% 33.15%),
+          #999172
+        ) !important;
+      }
+    }
+    .dot {
+      position: absolute;
+      //   height: 10px;
+      //   width: 10px;
+      background: #794f038a;
+      border-radius: 50px;
+      //   top: 0px;
+      //   left: 0px;
+    }
+  }
+}
