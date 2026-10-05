@@ -1,0 +1,55 @@
+.score-body {
+  min-height: 100px;
+  padding: 10px;
+
+  .health-box {
+  }
+  .outer-progress {
+    position: relative;
+    width: 200px;
+    height: 20px;
+    background: #eee;
+    border-radius: 30px;
+    box-shadow: 2px 1px 5px #7d38383b;
+    font-size: 10px;
+  }
+  .inner-progress {
+    border-radius: 30px;
+    background: #5df561;
+    height: 100%;
+  }
+  .heart-text-box {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    img {
+      opacity: 0.8;
+    }
+  }
+  .score-box {
+    margin-top: 10px;
+  }
+  .score {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 15px;
+    .score-value {
+      font-size: 25px;
+      font-weight: bold;
+    }
+  }
+  .max-score {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    .sc-value {
+      // font-size: 20px;
+      font-weight: bold;
+    }
+  }
+}

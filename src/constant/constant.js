@@ -1,0 +1,1 @@
+export const HIGHEST_SCORE = "HIGHEST_SCORE";

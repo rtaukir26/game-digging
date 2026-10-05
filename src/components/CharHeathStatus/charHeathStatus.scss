@@ -1,0 +1,31 @@
+.char-heath-status {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  overflow: hidden;
+
+  .info-box {
+    background: #0005;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 5px #000;
+    margin: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .heath-details {
+    color: #fff;
+    width: 300px;
+    height: 300px;
+    background: #031c2d;
+    margin: 15px;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: -2px 3px 6px #00000069;
+    transition: all 0.3s ease;
+  }
+}

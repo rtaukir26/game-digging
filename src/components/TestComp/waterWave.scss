@@ -1,0 +1,70 @@
+.wave-box {
+  //   position: relative;
+  // background: #2196f3; // your box color
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  //   height: 100vh;
+  //   background-image: url("../../assets/images/underground-half.jpg");
+  //   background-image: url("../../assets/images/underground2.jpg");
+  //   background-repeat: repeat-x;
+}
+.layer-top {
+  width: 100%;
+  height: 43vh;
+  background-image: url("../../assets/images/underground2.jpg");
+  background-repeat: repeat-x;
+}
+.layer-2 {
+  width: 100%;
+  height: 43vh;
+  background-image: url("../../assets/images/underground2_opp.jpg");
+  background-repeat: repeat-x;
+}
+.layer-3 {
+  width: 100%;
+  height: 43vh;
+  background-image: url("../../assets/images/underg3.jpg");
+  //   background-repeat: repeat-x;
+}
+.layer-4 {
+  width: 100%;
+  height: 105vh;
+  background-image: url("../../assets/images/underg4-half.jpg");
+  //   background-image: url("../../assets/images/underg4-half1.jpg");
+  //   background-repeat: repeat-x;
+}
+.wave-wpr {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+.wave {
+  position: absolute;
+  path {
+    fill: #8d7610;
+  }
+  &.w1 {
+    top: 0px;
+  }
+  &.w2 {
+    top: 28px;
+    path {
+      fill: #77661a !important;
+    }
+  }
+  &.w3 {
+    top: 53px;
+    left: 36%;
+    path {
+      fill: #6d6543 !important;
+    }
+  }
+}

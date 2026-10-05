@@ -1,8 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import WireWorms from "../../components/Characters/WireWorms/WireWorms";
-import DataMapping from "../../components/DataMapping/DataMapping";
 import Surface from "../../components/Surface/Surface";
+import WaterWave from "../../components/TestComp/WaterWave";
+import { allImages } from "../../utils/images";
+import ScoreComp from "../../components/ScoreComp/ScoreComp";
+import { HIGHEST_SCORE } from "../../constant/constant";
+import CharHeathStatus from "../../components/CharHeathStatus/CharHeathStatus";
+/** Score formula
+    50 row = 1m (metre)
+    1 row = 0.02 m --->  m/total rows, 1/50 = 0.02m
 
+    15 step = 0.02m ---> 0.02/15 = 0.00133m
+    1 step = 0.00133m
+ 
+ */
+const INITIAL_METRE = 0.02;
 const generateRowsData = () =>
   Array.from({ length: ROWS }, () => {
     const randomZero = Math.floor(Math.random() * 2);
@@ -14,9 +26,7 @@ const generateRowsData = () =>
   });
 const generateDotPositions = () =>
   Array.from({ length: STONES_PER_ROW }, () => {
-    const noOfDots = Math.floor(
-      Math.random() * (STONES_PER_ROW - STONES_PER_ROW / 5),
-    );
+    const noOfDots = Math.floor(Math.random() * STONES_PER_ROW);
     const randomDots = Array.from({ length: noOfDots }, () =>
       Math.floor(Math.random() * STONES_PER_ROW),
     );
@@ -27,15 +37,12 @@ const generateDotPositions = () =>
       Math.floor(Math.random() * 100),
     );
     const width = Array.from({ length: randomDots?.length }, () =>
-      Math.floor(Math.random() * 12),
+      Math.floor(Math.random() * 30),
     );
     const height = Array.from({ length: randomDots?.length }, () =>
-      Math.floor(Math.random() * 15),
+      Math.floor(Math.random() * 22),
     );
-    const leftPoss = Math.floor(Math.random() * 100);
-    const topPoss = Math.floor(Math.random() * 10);
-    const widthh = Math.floor(Math.random() * 10);
-    const heightt = Math.floor(Math.random() * width);
+    // const leftPoss = Math.floor(Math.random() * 100);
 
     return { noOfDots, randomDots, leftPos, topPos, width, height };
   });
@@ -49,7 +56,7 @@ const CHAR_WIDTH = 30;
 const STEP_TB = 2; //ForTop and Bottom Step in (px)
 const STEP_LR = 2; //For left and right step in px)
 const EXTRA_VALUE = 0;
-const ADJUST_VALUE = 20;
+const ADJUST_VALUE = 6.5;
 
 const GameScreen = () => {
   const [mainCharPosition, setMainCharPosition] = useState({
@@ -69,11 +76,18 @@ const GameScreen = () => {
   const touchedRef = useRef([]);
   const lastSafeRef = useRef(mainCharPosition);
 
+  const [score, setScore] = useState(0);
+  const [HighestScore, setHighestScore] = useState(
+    localStorage.getItem(HIGHEST_SCORE) || 0,
+  );
+  const [health, setHealth] = useState(100);
+
   console.log("mainCharPosition", mainCharPosition);
   console.log("currRow", currentRow);
   console.log("currentStone", currentStone);
+  console.log("score", score);
   //   console.log("hardStones", hardStones);
-  console.log("dotPositions", dotPositions);
+  //   console.log("dotPositions", dotPositions);
 
   //Stones per row
   const rows = useMemo(
@@ -83,33 +97,30 @@ const GameScreen = () => {
           <p key={i} className="row" data-row-id={i}>
             {i}
             {Array.from({ length: STONES_PER_ROW }, (_, j) => {
+              const currStone =
+                hardStones[i]?.randomHardStone.includes(j) && j + 1;
               return (
                 <span
                   key={j}
-                  className={`stone  ${
+                  //   className={`stone  ${
+                  //     i > 1 &&
+                  //     hardStones[i]?.randomHardStone.includes(j) &&
+                  //     "hard-stone"
+                  //   }`}
+                  className={`stone ${
                     i > 1 &&
-                    hardStones[i]?.randomHardStone.includes(j) &&
-                    "hard-stonee"
+                    (hardStones[i]?.randomHardStone.includes(j) ||
+                      hardStones[i]?.randomHardStone.includes(j - 1))
+                      ? "hard-stone"
+                      : ""
                   }`}
                   data-stone-id={`stone${j}`}
                   id={`stone${j}`}
                 >
                   {/* {j} */}
-
-                  {/* <span
-                    style={{
-                      left: dotPositions[i]?.leftPos[j] + "px",
-                      top: dotPositions[i]?.topPos[j] + "px",
-                      width: dotPositions[i]?.width[j] + "px",
-                      height: dotPositions[i]?.height[j] + "px",
-                    }}
-                    key={j}
-                    className={`dot-span ${
-                      dotPositions[i]?.randomDots?.includes(j) && "dot"
-                    }`}
-                    data-stone-id={`dot${j}`}
-                    id={`dot${j}`}
-                  ></span> */}
+                  {/* {i > 1 && hardStones[i]?.randomHardStone.includes(j) && (
+                    <img src={allImages.imgStoneIcon} alt="stone-img" />
+                  )} */}
                 </span>
               );
             })}
@@ -126,20 +137,12 @@ const GameScreen = () => {
       setMainCharPosition((prev) => {
         switch (e.key) {
           case "ArrowLeft":
-            // getCurrentStone(prev.left - STEP_LR);
             return { ...prev, left: prev.left - STEP_LR };
           case "ArrowRight":
-            // getCurrentStone(prev.left + STEP_LR);
             return { ...prev, left: prev.left + STEP_LR };
           case "ArrowUp":
-            // getCurrentRow(prev.top - STEP_TB);
-            // getCurrentStone(prev.left);
-            // getCurrentPosition(prev.top - STEP_TB, prev.left);
             return { ...prev, top: prev.top - STEP_TB };
           case "ArrowDown":
-            // getCurrentRow(prev.top + STEP_TB);
-            // getCurrentStone(prev.left);
-            // getCurrentPosition(prev.top + STEP_TB, prev.left);
             return {
               ...prev,
               top: prev.top + STEP_TB,
@@ -155,7 +158,7 @@ const GameScreen = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  //Change stone bg when main char moves
+  //Change stone bg color when main char moves
   useEffect(() => {
     getCurrentPosition();
   }, [currentRow, currentStone]);
@@ -200,12 +203,14 @@ const GameScreen = () => {
     // if (next[2]) next[2].style.borderRadius = "0 0 40px 0"; // bottom-right corner
     touchedRef.current = next;
   };
-  // must be written BELOW the highlight effect, so stone_touched is already updated
+
+  // Hit. Main char stops if touch hard stone and reduce health
   useEffect(() => {
     const hit = containerRef.current.querySelector(".stone_touched.hard-stone");
-
+    // const stepBack = lastSafeRef.current;
     if (hit) {
       setMainCharPosition(lastSafeRef.current); // hard stone touched: go back
+      setHealth((pre) => pre - 0.2);
     } else {
       lastSafeRef.current = mainCharPosition; // safe: remember this spot
     }
@@ -231,11 +236,34 @@ const GameScreen = () => {
       container.scrollTop = Math.max(0, mainCharPosition.top - SCROLL_MARGIN);
     }
   }, [mainCharPosition.top]);
+
+  //Score
+  useEffect(() => {
+    const highestScore = localStorage.getItem(HIGHEST_SCORE);
+
+    const currScore = (
+      ((mainCharPosition.top / STEP_TB) * INITIAL_METRE) /
+      15
+    ).toFixed(4);
+
+    if (currScore > highestScore) {
+      localStorage.setItem(HIGHEST_SCORE, currScore);
+      setHighestScore(currScore);
+    }
+
+    setScore(currScore > 0 ? currScore : 0.0);
+  }, [mainCharPosition.top]);
   return (
     <div className="game-screen">
-      <div className="score-container">hd</div>
-      <div className="surface-con">{/* <Surface /> */}</div>
+      <div className="score-container">
+        <ScoreComp score={score} HighestScore={HighestScore} health={health} />
+      </div>
+      <div className="surface-con">
+        <Surface />
+      </div>
       <div className="play-container" ref={containerRef}>
+        <CharHeathStatus />
+        {/* Main character */}
         <div
           className="main-char"
           ref={charRef}
@@ -246,11 +274,14 @@ const GameScreen = () => {
             bottom: mainCharPosition.bottom,
           }}
         >
-          <div className="char-body"></div>
+          <div className="char-body">
+            {/* <img src={allImages.mainAntIcon} alt="main-ant" /> */}
+          </div>
         </div>
 
+        <WaterWave />
         {rows}
-        {/**   */}
+        {/** Insects   */}
         {/* <WireWorms /> */}
       </div>
     </div>

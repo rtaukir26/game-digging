@@ -28,4 +28,13 @@ export const allImages = {
     "../assets/images/surface-line4.jpg",
     import.meta.url,
   ),
+  underground2Icon: new URL(
+    "../assets/images/underground2.jpg",
+    import.meta.url,
+  ),
+  imgStoneIcon: new URL("../assets/images/img-stone.png", import.meta.url),
+  mainAntIcon: new URL("../assets/images/main-ant.png", import.meta.url),
+  heartIcon: new URL("../assets/images/heart-rate.png", import.meta.url),
+  heartBlkIcon: new URL("../assets/images/heart-rate-blk.png", import.meta.url),
+  infoIcon: new URL("../assets/images/info.png", import.meta.url),
 };
