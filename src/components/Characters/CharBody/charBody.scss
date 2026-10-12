@@ -1,0 +1,117 @@
+.main-char {
+  position: absolute;
+  z-index: 1;
+  .char-body {
+    // position: relative;
+    background: #734e0d;
+    height: 30px;
+    width: 30px;
+    border-radius: 10px;
+  }
+
+  .char-body-wpr {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    &.ArrowUp {
+      transform: rotate(182deg);
+    }
+    &.ArrowDown {
+      transform: rotate(0deg);
+    }
+    &.ArrowLeft {
+      transform: rotate(86deg);
+    }
+    &.ArrowRight {
+      transform: rotate(270deg);
+    }
+  }
+  .head-body {
+    position: absolute;
+    bottom: 0px;
+    left: 10.5px;
+    width: 10px;
+    height: 16px;
+    background: #000;
+    border-radius: 50%;
+  }
+  .below-head-body {
+    position: absolute;
+    bottom: 6px;
+    left: 8.4px;
+    width: 15px;
+    height: 18px;
+    background: #000;
+    border-radius: 50%;
+  }
+  .back-body {
+    position: absolute;
+    bottom: 18px;
+    left: 10px;
+    height: 10px;
+    width: 11px;
+    background: #000;
+    border-radius: 50px;
+  }
+  .hand-right {
+    height: 14px;
+    width: 2px;
+    background: #000;
+    bottom: 3px;
+    left: 6px;
+    position: absolute;
+    transform: rotate(304deg);
+    -webkit-animation: hand_right_amin 1s linear infinite;
+  }
+  .hand-left {
+    height: 14px;
+    width: 2px;
+    background: #000;
+    bottom: 3.8px;
+    right: 4px;
+    position: absolute;
+    transform: rotate(270deg);
+    -webkit-animation: hand_left_amin 1s linear infinite;
+  }
+  .hand-r-near-head {
+    height: 8px;
+    width: 2px;
+    background: #000;
+    bottom: -2px;
+    left: 8px;
+    position: absolute;
+    transform: rotate(35deg);
+    -webkit-animation: hand_right_head_amin 1s linear infinite;
+  }
+  .hand-l-near-head {
+    height: 8px;
+    width: 2px;
+    background: #000;
+    bottom: -2px;
+    right: 7px;
+    position: absolute;
+    transform: rotate(330deg);
+    -webkit-animation: hand_left_head_amin 1s linear infinite;
+  }
+  .hand-right-bottom {
+    -webkit-animation: hand_right_amin 1s linear infinite;
+
+    height: 8px;
+    width: 2px;
+    background: #000;
+    bottom: 20px;
+    left: 7px;
+    position: absolute;
+    transform: rotate(-35deg);
+  }
+  .hand-left-bottom {
+    height: 8px;
+    width: 2px;
+    background: #000;
+    bottom: 20px;
+    right: 6px;
+    position: absolute;
+    transform: rotate(35deg);
+    -webkit-animation: hand_left_amin 1s linear infinite;
+  }
+}

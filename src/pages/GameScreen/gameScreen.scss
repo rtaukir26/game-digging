@@ -1,11 +1,9 @@
 .game-screen {
-  //   background: #ffa5008a;
   height: 100vh;
   overflow: hidden;
 
   .score-container {
     min-height: 40px;
-    // background: #88cfff;
   }
   .play-container {
     position: relative;
@@ -14,14 +12,12 @@
     background: #ffa5008a;
   }
   .row {
-    // position: relative;
     display: flex;
     overflow: hidden;
     height: 30px;
     width: 100%;
     color: #fff;
-    // background: #333;
-    // border-bottom: 1px solid #e63946;
+
     .stone {
       position: relative;
       color: #000;
@@ -62,14 +58,5 @@
         }
       }
     }
-    // .dot {
-    //   position: absolute;
-    //   //   height: 10px;
-    //   //   width: 10px;
-    //   background: #f3efe7;
-    //   border-radius: 4px;
-    //   //   top: 0px;
-    //   //   left: 0px;
-    // }
   }
 }

@@ -37,4 +37,35 @@ export const allImages = {
   heartIcon: new URL("../assets/images/heart-rate.png", import.meta.url),
   heartBlkIcon: new URL("../assets/images/heart-rate-blk.png", import.meta.url),
   infoIcon: new URL("../assets/images/info.png", import.meta.url),
+  arrowDownIcon: new URL("../assets/images/down-arrow.png", import.meta.url),
+  mainAntIcon: new URL("../assets/images/main-ant-front.png", import.meta.url),
+  goldIcon: new URL("../assets/images/gold.png", import.meta.url),
+  diamondIcon: new URL("../assets/images/diamond.png", import.meta.url),
+  rubyIcon: new URL("../assets/images/ruby.png", import.meta.url),
+  rewardIcon: new URL("../assets/images/reward.png", import.meta.url),
+  treeUnderGroundIcon: new URL(
+    "../assets/images/treeundergrund.png",
+    import.meta.url,
+  ),
+  treeUnderGroundIcon2: new URL(
+    "../assets/images/treeUnderGround2.png",
+    import.meta.url,
+  ),
+  crackLandIcon: new URL("../assets/images/cracks-land.png", import.meta.url),
+  mouseWalkIcon: new URL(
+    "../assets/images/gif/mouse-walk.gif",
+    import.meta.url,
+  ),
+  mouseWalk2xIcon: new URL(
+    "../assets/images/gif/mouse-walk2x.gif",
+    import.meta.url,
+  ),
+  spiderWalkIcon: new URL(
+    "../assets/images/gif/spider-walk.gif",
+    import.meta.url,
+  ),
+  spiderZikZakIcon: new URL(
+    "../assets/images/gif/spider-zikzak.gif",
+    import.meta.url,
+  ),
 };

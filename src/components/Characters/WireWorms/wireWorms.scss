@@ -3,14 +3,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 115px;
   height: 15px;
-  top: 50px;
-  left: 40px;
   padding: 10px;
-  -webkit-animation: move_insect 100s linear;
-  animation: move_insect 100s linear;
+  // position: absolute;
+  // display: flex;
+  // align-items: flex-end;
+  // gap: 2px;
+  // height: 24px; // room for the lift, so the hitbox covers it
+  // -webkit-animation: patrol_x var(--move-speed) linear var(--delay-anim)
+  //   infinite alternate both;
+  animation:
+    patrol_x var(--move-speed) linear var(--delay-anim) infinite alternate both,
+    wobble calc(var(--move-speed) * 2) ease-in-out var(--delay-anim) infinite
+      both;
   transition: all 0.3s ease-in;
+
   .wireworm-body {
     position: relative;
     display: flex;
@@ -21,57 +28,62 @@
   }
   .wireworm-cell {
     position: absolute;
-    background: #55101e;
-    height: 10px;
     border-radius: 10px;
     box-shadow: -2px 0px 4px #000;
+    &.worm-head {
+      background: var(--worm-head-bg) !important;
+    }
     &.even {
-      -webkit-animation: move_even_y 3s linear infinite;
-      //   animation: move_insect 100s linear;
+      -webkit-animation: move_even_y 2s linear infinite;
     }
     &.old {
-      -webkit-animation: move_old_yy 3s linear infinite 6s;
-      //   animation: move_insect 100s linear;
+      -webkit-animation: move_old_y 2s linear infinite 0s;
     }
-  }
-}
-@keyframes move_insect {
-  0% {
-    transform: translateX(30%);
-  }
-  10% {
-    transform: translateX(50%);
-  }
-  50% {
-    transform: translateX(60%) rotate(35deg);
-  }
-  80% {
-    transform: translateX(70%) translateY(50px);
-  }
-  100% {
-    transform: translateX(100%) translateY(50px);
   }
 }
 
-@keyframes move_even_y {
-  0% {
-    transform: translateY(-1px);
-  }
-  50% {
-    transform: translateY(1px);
-  }
-  100% {
-    transform: translateY(-1px);
-  }
+.worm-seg {
+  --step: var(-- step, 0.15s); // gap between one segment moving and the next
+  width: 8px;
+  height: 8px;
+  border-radius: var(--borderRadius, 50%);
+  background: var(--bg, #55101e);
+  animation: inch 2s ease-in-out infinite both;
+  // head (last index) = 0 delay, each segment behind it waits a bit longer
+  animation-delay: calc((var(--n) - 1 - var(--i)) * var(--step));
 }
-@keyframes move_old_y {
-  0% {
-    transform: translateY(1px);
-  }
-  50% {
-    transform: translateY(-1px);
-  }
+
+.worm-head {
+  // width: 11px;
+  // height: 11px;
+  // background: var(--);
+  background: var(--worm-head-bg) !important;
+}
+
+@keyframes inch {
+  0%,
+  50%,
   100% {
-    transform: translateY(1px);
+    transform: translateY(0);
+  } // resting on the ground
+  15%,
+  35% {
+    transform: translateY(var(--translate-y, -5px));
+  } // lifted
+}
+.mouse-walk {
+  position: absolute;
+  width: 7%;
+  // animation:
+  // patrol_x var(--move-speed, 45s) linear var(--delay-anim, 0s) forwards;
+  --face: 1;
+  animation:
+    patrol_x var(--move-speed, 45s) linear var(--delay-anim, 0s) infinite
+      alternate both,
+    face calc(var(--move-speed, 45s) * 2) linear var(--delay-anim, 0s) infinite
+      both;
+
+  img {
+    filter: drop-shadow(-5px 3px 3px #000) brightness(var(--brightness, 20%));
   }
 }

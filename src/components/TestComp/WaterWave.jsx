@@ -1,3 +1,4 @@
+import { allImages } from "../../utils/images";
 import "./waterWave.scss";
 const WaterWave = () => {
   return (
@@ -36,8 +37,22 @@ const WaterWave = () => {
       {/* <div className="wave-wpr">
         <img src={allImages.underground2Icon} alt="underground2" />
       </div> */}
-      <div className="layer-top"></div>
-      <div className="layer-2"></div>
+
+      <div className="layer-top">
+        <img
+          className="img-lp"
+          src={allImages.treeUnderGroundIcon2}
+          alt="treeUnderGroundIcon"
+        />
+      </div>
+      <div className="layer-2">
+        <img
+          className="img-lp"
+          src={allImages.crackLandIcon}
+          alt="crackLandIcon"
+        />
+      </div>
+
       <div className="layer-3"></div>
       <div className="layer-4"></div>
     </div>

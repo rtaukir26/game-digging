@@ -4,8 +4,15 @@ import Surface from "../../components/Surface/Surface";
 import WaterWave from "../../components/TestComp/WaterWave";
 import { allImages } from "../../utils/images";
 import ScoreComp from "../../components/ScoreComp/ScoreComp";
-import { HIGHEST_SCORE } from "../../constant/constant";
+import {
+  HIGHEST_REWARD,
+  HIGHEST_SCORE,
+  insectClass,
+} from "../../constant/constant";
 import CharHeathStatus from "../../components/CharHeathStatus/CharHeathStatus";
+import CharBody from "../../components/Characters/CharBody/CharBody";
+import RewardPopup from "../../components/ReactModals/RewardPopup/RewardPopup";
+import WormsContainer from "../../components/Characters/WireWorms/WormsContainer";
 /** Score formula
     50 row = 1m (metre)
     1 row = 0.02 m --->  m/total rows, 1/50 = 0.02m
@@ -81,11 +88,17 @@ const GameScreen = () => {
     localStorage.getItem(HIGHEST_SCORE) || 0,
   );
   const [health, setHealth] = useState(100);
+  const [moveDirection, setMoveDirection] = useState("ArrowDown");
+  const [rewards, setRewards] = useState(
+    Number(localStorage.getItem(HIGHEST_REWARD)) || 0,
+  ); //total points/rewards added
+  // const [point, setPoint] = useState(0); //each time gets reward
 
   console.log("mainCharPosition", mainCharPosition);
   console.log("currRow", currentRow);
   console.log("currentStone", currentStone);
-  console.log("score", score);
+  //   console.log("score", score);
+  console.log("moveDirection", moveDirection);
   //   console.log("hardStones", hardStones);
   //   console.log("dotPositions", dotPositions);
 
@@ -97,8 +110,6 @@ const GameScreen = () => {
           <p key={i} className="row" data-row-id={i}>
             {i}
             {Array.from({ length: STONES_PER_ROW }, (_, j) => {
-              const currStone =
-                hardStones[i]?.randomHardStone.includes(j) && j + 1;
               return (
                 <span
                   key={j}
@@ -134,6 +145,7 @@ const GameScreen = () => {
     const handleKeyDown = (e) => {
       if (!e.key.startsWith("Arrow")) return;
       e.preventDefault(); // stop the page from scrolling
+      setMoveDirection(e.key);
       setMainCharPosition((prev) => {
         switch (e.key) {
           case "ArrowLeft":
@@ -151,6 +163,7 @@ const GameScreen = () => {
             return prev; // same object, so no re-render
         }
       });
+      checkWormCollision();
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -203,14 +216,17 @@ const GameScreen = () => {
     // if (next[2]) next[2].style.borderRadius = "0 0 40px 0"; // bottom-right corner
     touchedRef.current = next;
   };
-
   // Hit. Main char stops if touch hard stone and reduce health
   useEffect(() => {
     const hit = containerRef.current.querySelector(".stone_touched.hard-stone");
     // const stepBack = lastSafeRef.current;
+    console.log("hit touched", hit);
     if (hit) {
       setMainCharPosition(lastSafeRef.current); // hard stone touched: go back
-      setHealth((pre) => pre - 0.2);
+      // setHealth((pre) => pre - 0.2);
+
+      // if (hit.dataset.touched) return;
+      upgradeHealthStatus(hit);
     } else {
       lastSafeRef.current = mainCharPosition; // safe: remember this spot
     }
@@ -240,6 +256,7 @@ const GameScreen = () => {
   //Score
   useEffect(() => {
     const highestScore = localStorage.getItem(HIGHEST_SCORE);
+    const highestReward = Number(localStorage.getItem(HIGHEST_REWARD));
 
     const currScore = (
       ((mainCharPosition.top / STEP_TB) * INITIAL_METRE) /
@@ -250,13 +267,90 @@ const GameScreen = () => {
       localStorage.setItem(HIGHEST_SCORE, currScore);
       setHighestScore(currScore);
     }
+    if (rewards > highestReward) {
+      localStorage.setItem(HIGHEST_REWARD, rewards);
+    }
 
     setScore(currScore > 0 ? currScore : 0.0);
-  }, [mainCharPosition.top]);
+  }, [mainCharPosition.top, rewards]);
+
+  //when touch bugs/worms
+  function checkWormCollision() {
+    if (!charRef.current) return;
+    const charRect = charRef.current.getBoundingClientRect();
+    const worms = document.querySelectorAll("." + insectClass.wireworm);
+
+    worms.forEach((wormEl) => {
+      if (wormEl.dataset.touched) return; // already handled, skip
+      const wormRect = wormEl.getBoundingClientRect();
+
+      // console.log("charRect", charRect, wormRect);
+      const isTouching = !(
+        charRect.right < wormRect.left ||
+        charRect.left > wormRect.right ||
+        charRect.bottom < wormRect.top ||
+        charRect.top > wormRect.bottom
+      );
+
+      if (isTouching) {
+        wormEl.dataset.touched = "true"; // set right away so it can't fire twice
+        // console.log("touched worm ID:", wormEl.id);
+        const rewardValue = Number(wormEl.id.split("-").pop());
+        const worm = document.getElementById(wormEl.id);
+
+        const container = document.querySelector(".play-container");
+        const containerRect = container.getBoundingClientRect();
+
+        //Reward span tag
+        const popupSpan = document.createElement("span");
+        popupSpan.textContent = `+${rewardValue}`;
+        popupSpan.className = "reward-popup";
+
+        popupSpan.style.left = `${wormRect.left - containerRect.left + 40}px`;
+        popupSpan.style.top = `${wormRect.top - containerRect.top - 20}px`;
+        container.appendChild(popupSpan);
+
+        setRewards((pre) => pre + rewardValue);
+
+        setTimeout(() => {
+          worm.style.display = "none";
+          //   worm.style.background = "#000";
+          popupSpan.remove();
+        }, 800);
+      }
+    });
+  }
+
+  //Reduce health status when touches hard stones
+  const jitter = (range) => (Math.random() - 0.5) * 2 * range;
+  function upgradeHealthStatus(hitStone) {
+    // hitStone.dataset.touched = "true";
+    const main_char = document.querySelector(".char-body");
+
+    const healthSpan = document.createElement("span");
+    healthSpan.textContent = "-0.2";
+    setHealth((pre) => pre - 0.2);
+    healthSpan.classList.add("reward-popup", "health-popup");
+
+    const char = charRef.current.getBoundingClientRect();
+    // console.log("char", char);
+
+    healthSpan.style.left = `${jitter(22)}px`; // ±18px sideways
+    healthSpan.style.top = `${jitter(18)}px`; // ±10px up/down
+    healthSpan.style.setProperty("--drift", `${jitter(25)}px`); // sideways drift while floating
+    main_char.appendChild(healthSpan);
+
+    setTimeout(() => healthSpan.remove(), 2000); // match the animation length
+  }
   return (
     <div className="game-screen">
       <div className="score-container">
-        <ScoreComp score={score} HighestScore={HighestScore} health={health} />
+        <ScoreComp
+          score={score}
+          HighestScore={HighestScore}
+          health={health}
+          rewards={rewards}
+        />
       </div>
       <div className="surface-con">
         <Surface />
@@ -276,13 +370,15 @@ const GameScreen = () => {
         >
           <div className="char-body">
             {/* <img src={allImages.mainAntIcon} alt="main-ant" /> */}
+            {/* <CharBody moveDirection={moveDirection} /> */}
           </div>
         </div>
 
         <WaterWave />
+
+        {/** Insects/Worms   */}
+        <WormsContainer />
         {rows}
-        {/** Insects   */}
-        {/* <WireWorms /> */}
       </div>
     </div>
   );

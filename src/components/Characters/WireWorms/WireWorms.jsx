@@ -1,22 +1,66 @@
-import React from "react";
+import { insectClass } from "../../../constant/constant";
 
-const WireWorms = () => {
+const WireWorms = ({
+  num,
+  wormId,
+  width,
+  headWidth,
+  height,
+  headHeight,
+  gap,
+  top,
+  left,
+  bg,
+  headBG = "#55101e",
+  moveSpeed = "100s",
+  delayAnim = "0s",
+  animStarts,
+  animEnds,
+  translateY,
+  step,
+  borderRadius = "50%",
+}) => {
+  const widthOfWorm = () => {
+    let totalWidthOfWorm = num * width + headWidth;
+    for (let i = 0; i < gap; i++) {
+      totalWidthOfWorm += i;
+    }
+    return totalWidthOfWorm || 0;
+  };
+
   return (
-    <div className="wireworm">
-      <div className="wireworm-body">
-        {Array.from({ length: 10 }, (_, i) => {
+    <div
+      className={insectClass.wireworm}
+      id={wormId}
+      style={{
+        top,
+        left,
+        "--move-speed": moveSpeed,
+        "--delay-anim": delayAnim,
+        "--anim-starts": animStarts,
+        "--anim-ends": animEnds,
+        "--bg": bg,
+        "--n": num,
+
+        width: widthOfWorm(),
+      }}
+    >
+      <div className={`wireworm-body ${wormId}`}>
+        {Array.from({ length: num }, (_, i) => {
           return (
-            <div
+            <span
               key={i}
-              id={i}
-              className={`wireworm-cell ${i % 2 === 0 ? "even" : "old"}`}
+              className={` worm-seg ${i === num - 1 ? "worm-head" : ""}`}
               style={{
-                width: `${i < 9 ? 100 / 10 : 15}%`,
-                height: `${i == 9 && 14}px`,
-                left: `${i * 10}px`,
-                top: `${i <= 3 ? i * -1 : i > 3 && i < 6 ? i * -0.5 : i * 0.2}px`,
+                "--i": i,
+                "--worm-head-bg": headBG,
+                "--translate-y": translateY,
+                "--step": step,
+                width: `${i < num - 1 ? width : headWidth}px`,
+                height: `${i < num - 1 ? height : headHeight}px`,
+                "--borderRadius": borderRadius,
               }}
-            ></div>
+            />
           );
         })}
       </div>

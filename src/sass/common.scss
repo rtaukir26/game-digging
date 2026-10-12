@@ -9,7 +9,7 @@ $fontSize: 14px;
 // }
 html {
   font-size: $fontSize;
-  font-family: "Roboto", serif;
+  font-family: "Roboto", system-ui;
 }
 // .main {
 //   overflow-x: hidden;
@@ -39,6 +39,15 @@ ul {
     position: absolute;
     color: red;
     margin-left: 4px;
+  }
+}
+.column {
+  position: relative;
+  &::after {
+    content: ":";
+    position: absolute;
+    margin-left: 4px;
+    right: 0px;
   }
 }
 .error {
@@ -90,6 +99,15 @@ ul {
   100% {
     right: -17px;
   }
+}
+.reward-popup {
+  position: absolute;
+  font-weight: bold;
+  color: gold;
+  pointer-events: none;
+  -webkit-animation: float-up 2s ease-out forwards;
+  animation: float-up 2s ease-out forwards;
+  z-index: 999;
 }
 .p35 {
   padding-left: 35px !important;

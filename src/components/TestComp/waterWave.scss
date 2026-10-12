@@ -15,12 +15,23 @@
   height: 43vh;
   background-image: url("../../assets/images/underground2.jpg");
   background-repeat: repeat-x;
+  .img-lp {
+    width: 10%;
+  }
 }
 .layer-2 {
+  position: relative;
   width: 100%;
   height: 43vh;
   background-image: url("../../assets/images/underground2_opp.jpg");
   background-repeat: repeat-x;
+  img {
+    position: absolute;
+    width: 9%;
+    top: -21%;
+    left: 36%;
+    border-radius: 30px;
+  }
 }
 .layer-3 {
   width: 100%;
