@@ -47,14 +47,32 @@ const WaterWave = () => {
       </div>
       <div className="layer-2">
         <img
-          className="img-lp"
+          className="crack-img"
           src={allImages.crackLandIcon}
           alt="crackLandIcon"
         />
+        <img className="pipe-img" src={allImages.pipeIcon} alt="pipe" />
+        <img className="pipe-img pi2" src={allImages.pipeIcon} alt="pipe" />
+        <img className="pipe2-img" src={allImages.pipe2pngIcon} alt="pipe" />
+        <img
+          className="pipe2-img pi2"
+          src={allImages.pipe2pngIcon}
+          alt="pipe"
+        />
+        <img className="tree" src={allImages.treeIcon} alt="tree" />
+        <img className="tree2" src={allImages.tree2Icon} alt="tree" />
       </div>
 
       <div className="layer-3"></div>
-      <div className="layer-4"></div>
+      <div className="layer-4">
+        <img className="hole" src={allImages.holeIcon} alt="hole" />
+        <img className="hole2" src={allImages.hole3pngIcon} alt="hole" />
+        <img className="hole3" src={allImages.hole3pngIcon} alt="hole" />
+        <img className="hole4" src={allImages.hole3pngIcon} alt="hole" />
+        <img className="hole7" src={allImages.hole3pngIcon} alt="hole" />
+        <img className="hole5" src={allImages.hole4Icon} alt="hole" />
+        <img className="hole6" src={allImages.hole4Icon} alt="hole" />
+      </div>
     </div>
   );
 };

@@ -54,9 +54,6 @@
 }
 
 .worm-head {
-  // width: 11px;
-  // height: 11px;
-  // background: var(--);
   background: var(--worm-head-bg) !important;
 }
 
@@ -71,11 +68,9 @@
     transform: translateY(var(--translate-y, -5px));
   } // lifted
 }
-.mouse-walk {
+.insect-walk {
   position: absolute;
   width: 7%;
-  // animation:
-  // patrol_x var(--move-speed, 45s) linear var(--delay-anim, 0s) forwards;
   --face: 1;
   animation:
     patrol_x var(--move-speed, 45s) linear var(--delay-anim, 0s) infinite
@@ -83,6 +78,19 @@
     face calc(var(--move-speed, 45s) * 2) linear var(--delay-anim, 0s) infinite
       both;
 
+  img {
+    filter: drop-shadow(-5px 3px 3px #000) brightness(var(--brightness, 20%));
+  }
+}
+.insect-walk-y {
+  position: absolute;
+  width: 7%;
+  --face: 1;
+  animation:
+    patrol_y var(--move-speed, 45s) linear var(--delay-anim, 0s) infinite
+      alternate both,
+    face_y calc(var(--move-speed, 45s) * 2) linear var(--delay-anim, 0s)
+      infinite both;
   img {
     filter: drop-shadow(-5px 3px 3px #000) brightness(var(--brightness, 20%));
   }

@@ -5,6 +5,7 @@ import WaterWave from "../../components/TestComp/WaterWave";
 import { allImages } from "../../utils/images";
 import ScoreComp from "../../components/ScoreComp/ScoreComp";
 import {
+  ALL_GAME_CHARACTERS,
   HIGHEST_REWARD,
   HIGHEST_SCORE,
   insectClass,
@@ -65,7 +66,17 @@ const STEP_LR = 2; //For left and right step in px)
 const EXTRA_VALUE = 0;
 const ADJUST_VALUE = 6.5;
 
+const getRandomData = (num = 100) => {
+  const d = Array.from({ length: num }).map((_, i) =>
+    Math.floor(Math.random() * 100),
+  );
+
+  return d;
+};
+
 const GameScreen = () => {
+  const [randomData] = useState(getRandomData());
+
   const [mainCharPosition, setMainCharPosition] = useState({
     left: 360,
     top: 0,
@@ -78,12 +89,12 @@ const GameScreen = () => {
   );
   const containerRef = useRef(null);
   const charRef = useRef(null); // needs to point at MainChar's DOM element
-  const [hardStones] = useState(generateRowsData());
-  const [dotPositions] = useState(generateDotPositions());
   const touchedRef = useRef([]);
   const lastSafeRef = useRef(mainCharPosition);
+  const [hardStones] = useState(generateRowsData());
+  // const [dotPositions] = useState(generateDotPositions());
 
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(0); //deep distance
   const [HighestScore, setHighestScore] = useState(
     localStorage.getItem(HIGHEST_SCORE) || 0,
   );
@@ -92,15 +103,8 @@ const GameScreen = () => {
   const [rewards, setRewards] = useState(
     Number(localStorage.getItem(HIGHEST_REWARD)) || 0,
   ); //total points/rewards added
-  // const [point, setPoint] = useState(0); //each time gets reward
 
   console.log("mainCharPosition", mainCharPosition);
-  console.log("currRow", currentRow);
-  console.log("currentStone", currentStone);
-  //   console.log("score", score);
-  console.log("moveDirection", moveDirection);
-  //   console.log("hardStones", hardStones);
-  //   console.log("dotPositions", dotPositions);
 
   //Stones per row
   const rows = useMemo(
@@ -108,16 +112,11 @@ const GameScreen = () => {
       Array.from({ length: ROWS }, (_, i) => {
         return (
           <p key={i} className="row" data-row-id={i}>
-            {i}
+            {/* {i} */}
             {Array.from({ length: STONES_PER_ROW }, (_, j) => {
               return (
                 <span
                   key={j}
-                  //   className={`stone  ${
-                  //     i > 1 &&
-                  //     hardStones[i]?.randomHardStone.includes(j) &&
-                  //     "hard-stone"
-                  //   }`}
                   className={`stone ${
                     i > 1 &&
                     (hardStones[i]?.randomHardStone.includes(j) ||
@@ -126,6 +125,7 @@ const GameScreen = () => {
                       : ""
                   }`}
                   data-stone-id={`stone${j}`}
+                  data-reduce-health="0.2"
                   id={`stone${j}`}
                 >
                   {/* {j} */}
@@ -138,14 +138,14 @@ const GameScreen = () => {
           </p>
         );
       }),
-    [hardStones, dotPositions],
+    [hardStones],
   );
-  //Main Char moving
+  //Main Char moves
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!e.key.startsWith("Arrow")) return;
       e.preventDefault(); // stop the page from scrolling
-      setMoveDirection(e.key);
+      setMoveDirection(e.key); //For main char rotation
       setMainCharPosition((prev) => {
         switch (e.key) {
           case "ArrowLeft":
@@ -163,7 +163,7 @@ const GameScreen = () => {
             return prev; // same object, so no re-render
         }
       });
-      checkWormCollision();
+      checkInsectCollision();
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -171,68 +171,175 @@ const GameScreen = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  //Change stone bg color when main char moves
+  function checkInsectCollision() {
+    if (!charRef.current) return;
+    const charRect = charRef.current.getBoundingClientRect();
+    const container = document.querySelector(".play-container");
+    if (!container) return;
+
+    // collected characters are excluded, so they cost nothing
+    const selector = ALL_GAME_CHARACTERS.map(
+      (c) => `.${c}:not([data-touched])`,
+    ).join(",");
+
+    // pass 1: reads only
+    // const hits = [];
+    document.querySelectorAll(selector).forEach((el) => {
+      collisionCondition(charRect, el);
+    });
+  }
+
+  const collisionCondition = (charRect, el, hitss) => {
+    let touching;
+    let level = Number(el?.dataset?.level);
+    let hits = [];
+    if (!level || isNaN(level)) {
+      level = 1;
+    }
+
+    switch (level) {
+      case 1:
+        const l1charRec = el.getBoundingClientRect();
+
+        touching = !(
+          charRect.right < l1charRec.left ||
+          charRect.left > l1charRec.right ||
+          charRect.bottom < l1charRec.top ||
+          charRect.top > l1charRec.bottom
+        );
+        if (touching) hits.push({ el, r: l1charRec });
+
+        // pass 2: writes only
+        hits.forEach(({ el, r }) => {
+          el.dataset.touched = "true"; // can't trigger twice
+
+          addRewardPopup(el, setRewards);
+        });
+        break;
+
+      case 2:
+        const l2charRec = el.getBoundingClientRect();
+
+        touching = !(
+          charRect.right < l2charRec.left ||
+          charRect.left > l2charRec.right ||
+          charRect.bottom < l2charRec.top ||
+          charRect.top > l2charRec.bottom
+        );
+        if (touching) upgradeHealthStatus(el);
+
+        break;
+
+      default:
+        return;
+    }
+  };
+
+  //Change stone bg color when main char moves(like dig hole)
   useEffect(() => {
-    getCurrentPosition();
-  }, [currentRow, currentStone]);
+    const getCurrentPosition = () => {
+      // clear stone_touched from the PREVIOUS block only (background stays)
+      touchedRef.current.forEach((el) => el.classList.remove("stone_touched"));
 
-  //Get main char position
-  const getCurrentPosition = () => {
-    // clear stone_touched from the PREVIOUS block only (background stays)
-    touchedRef.current.forEach((el) => el.classList.remove("stone_touched"));
+      const stoneEle1 = containerRef.current.querySelector(
+        `[data-row-id="${currentRow}"] [data-stone-id="stone${currentStone}"]`,
+      );
+      const stoneEle2 = containerRef.current.querySelector(
+        `[data-row-id="${currentRow}"] [data-stone-id="stone${currentStone - 1}"]`,
+      );
+      const stoneEle3 = containerRef.current.querySelector(
+        `[data-row-id="${currentRow}"] [data-stone-id="stone${currentStone + 1}"]`,
+      );
+      const stoneEle4 = containerRef.current.querySelector(
+        `[data-row-id="${currentRow - 1}"] [data-stone-id="stone${currentStone}"]`,
+      );
+      const stoneEle5 = containerRef.current.querySelector(
+        `[data-row-id="${currentRow - 1}"] [data-stone-id="stone${currentStone - 1}"]`,
+      );
+      const stoneEle6 = containerRef.current.querySelector(
+        `[data-row-id="${currentRow - 1}"] [data-stone-id="stone${currentStone + 1}"]`,
+      );
 
-    const stoneEle1 = containerRef.current.querySelector(
-      `[data-row-id="${currentRow}"] [data-stone-id="stone${currentStone}"]`,
-    );
-    const stoneEle2 = containerRef.current.querySelector(
-      `[data-row-id="${currentRow}"] [data-stone-id="stone${currentStone - 1}"]`,
-    );
-    const stoneEle3 = containerRef.current.querySelector(
-      `[data-row-id="${currentRow}"] [data-stone-id="stone${currentStone + 1}"]`,
-    );
-    const stoneEle4 = containerRef.current.querySelector(
-      `[data-row-id="${currentRow - 1}"] [data-stone-id="stone${currentStone}"]`,
-    );
-    const stoneEle5 = containerRef.current.querySelector(
-      `[data-row-id="${currentRow - 1}"] [data-stone-id="stone${currentStone - 1}"]`,
-    );
-    const stoneEle6 = containerRef.current.querySelector(
-      `[data-row-id="${currentRow - 1}"] [data-stone-id="stone${currentStone + 1}"]`,
-    );
-
-    const next = [];
-    [stoneEle1, stoneEle2, stoneEle3, stoneEle4, stoneEle5, stoneEle6].forEach(
-      (el) => {
+      const next = [];
+      [
+        stoneEle1,
+        stoneEle2,
+        stoneEle3,
+        stoneEle4,
+        stoneEle5,
+        stoneEle6,
+      ].forEach((el) => {
         if (el) {
           el.style.background = "#5d3f0a";
           el.classList.add("stone_touched");
           next.push(el);
         }
-      },
-    );
-    // if (next[4]) next[4].style.borderRadius = "40px 0 0 0"; // top-left corner
-    // if (next[5]) next[5].style.borderRadius = "0 40px 0 0"; // top-right corner
-    // if (next[1]) next[1].style.borderRadius = "0 0 0 40px"; // bottom-left corner
-    // if (next[2]) next[2].style.borderRadius = "0 0 40px 0"; // bottom-right corner
-    touchedRef.current = next;
-  };
-  // Hit. Main char stops if touch hard stone and reduce health
+      });
+      // if (next[4]) next[4].style.borderRadius = "40px 0 0 0"; // top-left corner
+      // if (next[5]) next[5].style.borderRadius = "0 40px 0 0"; // top-right corner
+      // if (next[1]) next[1].style.borderRadius = "0 0 0 40px"; // bottom-left corner
+      // if (next[2]) next[2].style.borderRadius = "0 0 40px 0"; // bottom-right corner
+      touchedRef.current = next;
+    };
+    getCurrentPosition();
+  }, [currentRow, currentStone]);
+
+  // Hit hard stones. Main char stops if touches hard stone and reduce health
   useEffect(() => {
     const hit = containerRef.current.querySelector(".stone_touched.hard-stone");
-    // const stepBack = lastSafeRef.current;
-    console.log("hit touched", hit);
     if (hit) {
       setMainCharPosition(lastSafeRef.current); // hard stone touched: go back
-      // setHealth((pre) => pre - 0.2);
-
-      // if (hit.dataset.touched) return;
       upgradeHealthStatus(hit);
     } else {
       lastSafeRef.current = mainCharPosition; // safe: remember this spot
     }
   }, [mainCharPosition]);
 
-  const SCROLL_MARGIN = 100; // px from the bottom before it starts scrolling
+  //Reduce health status when touches hard stones
+  const jitter = (range) => (Math.random() - 0.5) * 2 * range;
+  function upgradeHealthStatus(hitStone) {
+    const main_char = document.querySelector(".char-body");
+    const reduceVal = Number(hitStone?.dataset.reduceHealth);
+
+    const healthSpan = document.createElement("span");
+    healthSpan.textContent = reduceVal || 0;
+    setHealth((pre) => pre - reduceVal);
+    healthSpan.classList.add("reward-popup", "health-popup");
+
+    healthSpan.style.left = `${jitter(22)}px`; // ±18px sideways
+    healthSpan.style.top = `${jitter(18)}px`; // ±10px up/down
+    healthSpan.style.setProperty("--drift", `${jitter(25)}px`); // sideways drift while floating
+    main_char.appendChild(healthSpan);
+
+    setTimeout(() => healthSpan.remove(), 2000); // match the animation length
+  }
+
+  const addRewardPopup = (el, setter) => {
+    const main_char = document.querySelector(".char-body");
+
+    const rewardValue = Number(el.id.split("-").pop()) || 0;
+    if (!rewardValue) return;
+
+    const popupSpan = document.createElement("span");
+    popupSpan.textContent = `+${rewardValue}`;
+    popupSpan.className = "reward-popup";
+    // popupSpan.style.left = `${r.left - containerRect.left + jitter(20)}px`;
+    // popupSpan.style.top = `${r.top - containerRect.top - jitter(30)}px`;
+    // popupSpan.style.setProperty("--drift", `${(Math.random() - 0.5) * 50}px`);
+    popupSpan.style.left = `${jitter(22)}px`; // ±18px sideways
+    popupSpan.style.top = `${jitter(18)}px`; // ±10px up/down
+    popupSpan.style.setProperty("--drift", `${jitter(25)}px`); // sideways drift while floating
+    main_char.appendChild(popupSpan);
+
+    // setRewards((pre) => pre + rewardValue);
+    setter((pre) => pre + rewardValue);
+    setTimeout(() => {
+      popupSpan.remove();
+      el.style.display = "none";
+    }, 500);
+  };
+
+  const SCROLL_MARGIN = 200; // px from the bottom before it starts scrolling
 
   // Scroll when reaches to bottom
   useEffect(() => {
@@ -274,74 +381,6 @@ const GameScreen = () => {
     setScore(currScore > 0 ? currScore : 0.0);
   }, [mainCharPosition.top, rewards]);
 
-  //when touch bugs/worms
-  function checkWormCollision() {
-    if (!charRef.current) return;
-    const charRect = charRef.current.getBoundingClientRect();
-    const worms = document.querySelectorAll("." + insectClass.wireworm);
-
-    worms.forEach((wormEl) => {
-      if (wormEl.dataset.touched) return; // already handled, skip
-      const wormRect = wormEl.getBoundingClientRect();
-
-      // console.log("charRect", charRect, wormRect);
-      const isTouching = !(
-        charRect.right < wormRect.left ||
-        charRect.left > wormRect.right ||
-        charRect.bottom < wormRect.top ||
-        charRect.top > wormRect.bottom
-      );
-
-      if (isTouching) {
-        wormEl.dataset.touched = "true"; // set right away so it can't fire twice
-        // console.log("touched worm ID:", wormEl.id);
-        const rewardValue = Number(wormEl.id.split("-").pop());
-        const worm = document.getElementById(wormEl.id);
-
-        const container = document.querySelector(".play-container");
-        const containerRect = container.getBoundingClientRect();
-
-        //Reward span tag
-        const popupSpan = document.createElement("span");
-        popupSpan.textContent = `+${rewardValue}`;
-        popupSpan.className = "reward-popup";
-
-        popupSpan.style.left = `${wormRect.left - containerRect.left + 40}px`;
-        popupSpan.style.top = `${wormRect.top - containerRect.top - 20}px`;
-        container.appendChild(popupSpan);
-
-        setRewards((pre) => pre + rewardValue);
-
-        setTimeout(() => {
-          worm.style.display = "none";
-          //   worm.style.background = "#000";
-          popupSpan.remove();
-        }, 800);
-      }
-    });
-  }
-
-  //Reduce health status when touches hard stones
-  const jitter = (range) => (Math.random() - 0.5) * 2 * range;
-  function upgradeHealthStatus(hitStone) {
-    // hitStone.dataset.touched = "true";
-    const main_char = document.querySelector(".char-body");
-
-    const healthSpan = document.createElement("span");
-    healthSpan.textContent = "-0.2";
-    setHealth((pre) => pre - 0.2);
-    healthSpan.classList.add("reward-popup", "health-popup");
-
-    const char = charRef.current.getBoundingClientRect();
-    // console.log("char", char);
-
-    healthSpan.style.left = `${jitter(22)}px`; // ±18px sideways
-    healthSpan.style.top = `${jitter(18)}px`; // ±10px up/down
-    healthSpan.style.setProperty("--drift", `${jitter(25)}px`); // sideways drift while floating
-    main_char.appendChild(healthSpan);
-
-    setTimeout(() => healthSpan.remove(), 2000); // match the animation length
-  }
   return (
     <div className="game-screen">
       <div className="score-container">
@@ -370,14 +409,14 @@ const GameScreen = () => {
         >
           <div className="char-body">
             {/* <img src={allImages.mainAntIcon} alt="main-ant" /> */}
-            {/* <CharBody moveDirection={moveDirection} /> */}
+            {/* <CharBody moveDirection={moveDirection} />/ */}
           </div>
         </div>
 
         <WaterWave />
 
         {/** Insects/Worms   */}
-        <WormsContainer />
+        <WormsContainer randomData={randomData} />
         {rows}
       </div>
     </div>

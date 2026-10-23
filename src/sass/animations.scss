@@ -130,3 +130,24 @@
     transform: scaleX(calc(var(--face, 1) * -1));
   }
 }
+
+// horizontal: constant speed, there and back
+@keyframes patrol_y {
+  from {
+    top: var(--anim-starts, -20%);
+  }
+  to {
+    top: var(--anim-ends, 110%);
+  }
+}
+// nose points down on the way down, up on the way back
+@keyframes face_y {
+  0%,
+  49.99% {
+    transform: rotate(calc(90deg + var(--face-offset, 0deg)));
+  }
+  50%,
+  100% {
+    transform: rotate(calc(-90deg + var(--face-offset, 0deg)));
+  }
+}

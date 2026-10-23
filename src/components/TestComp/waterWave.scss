@@ -27,10 +27,45 @@
   background-repeat: repeat-x;
   img {
     position: absolute;
+    // width: 9%;
+    // top: -21%;
+    // left: 36%;
+    // border-radius: 30px;
+  }
+  .crack-img {
+    position: absolute;
     width: 9%;
     top: -21%;
     left: 36%;
     border-radius: 30px;
+  }
+  .pipe-img {
+    width: 60%;
+    border-radius: 2px;
+    bottom: 0px;
+    left: 0px;
+  }
+  .pi2 {
+    right: 0px !important;
+    left: auto;
+  }
+  .pipe2-img {
+    width: 60%;
+    border-radius: 2px;
+    bottom: -277px;
+  }
+  .tree {
+    width: 25%;
+    transform: rotate(-17deg);
+    top: -80px;
+    left: 14%;
+    filter: brightness(39%);
+  }
+  .tree2 {
+    width: 25%;
+    transform: rotate(0deg);
+    top: 14%;
+    left: 75%;
   }
 }
 .layer-3 {
@@ -40,11 +75,51 @@
   //   background-repeat: repeat-x;
 }
 .layer-4 {
+  position: relative;
   width: 100%;
   height: 105vh;
   background-image: url("../../assets/images/underg4-half.jpg");
   //   background-image: url("../../assets/images/underg4-half1.jpg");
   //   background-repeat: repeat-x;
+  img {
+    position: absolute;
+  }
+  .hole {
+    position: absolute;
+    width: 9%;
+    top: -10%;
+    left: 36%;
+  }
+  .hole2 {
+    left: 30%;
+    top: 0%;
+    width: 21%;
+  }
+  .hole3 {
+    left: 50%;
+    top: 10%;
+    width: 50%;
+  }
+  .hole4 {
+    left: 20%;
+    top: 30%;
+    width: 15%;
+  }
+  .hole7 {
+    left: 20%;
+    top: 32%;
+    width: 11%;
+  }
+  .hole5 {
+    left: 20%;
+    bottom: 20%;
+    width: 15%;
+  }
+  .hole6 {
+    left: 20%;
+    bottom: 21%;
+    width: 8%;
+  }
 }
 .wave-wpr {
   position: relative;

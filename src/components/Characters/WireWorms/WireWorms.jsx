@@ -19,6 +19,7 @@ const WireWorms = ({
   translateY,
   step,
   borderRadius = "50%",
+  level = "1",
 }) => {
   const widthOfWorm = () => {
     let totalWidthOfWorm = num * width + headWidth;
@@ -32,6 +33,7 @@ const WireWorms = ({
     <div
       className={insectClass.wireworm}
       id={wormId}
+      // data-level={level}
       style={{
         top,
         left,
